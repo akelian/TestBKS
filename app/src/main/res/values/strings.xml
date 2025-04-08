@@ -4,4 +4,8 @@
     <string name="login">Логин</string>
     <string name="password">Пароль</string>
     <string name="log_in">Войти</string>
+    <string name="email">Email</string>
+    <string name="fullname">Полное имя</string>
+    <string name="register">Регистрация</string>
+    <string name="enter_login_and_password">Введите логин и пароль</string>
 </resources>

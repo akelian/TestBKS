@@ -93,6 +93,7 @@ dependencies {
     implementation(libs.coil.kt.compose)
 
     // Firebase
+    implementation(libs.firebase.firestore)
     implementation(libs.firebase.auth)
     implementation(libs.credentials)
     implementation(libs.credentials.play.service.auth)

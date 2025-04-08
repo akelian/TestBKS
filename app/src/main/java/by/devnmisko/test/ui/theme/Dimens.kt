@@ -9,3 +9,5 @@ val defaultPaddingHalf = 4.dp
 
 val defaultTextFieldWidth = 300.dp
 val defaultIconSize = 24.dp
+
+val circularProgressSize = 32.dp
