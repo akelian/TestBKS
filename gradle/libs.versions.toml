@@ -9,7 +9,7 @@ lifecycleRuntimeKtx = "2.8.7"
 activityCompose = "1.10.1"
 composeBom = "2025.03.01"
 
-hilt = "2.51.1"
+hilt = "2.56.1"
 androidxHiltNavigationCompose = "1.2.0"
 androidx-navigation = "2.8.9"
 room = "2.6.1"
@@ -20,6 +20,10 @@ coroutines = "1.10.1"
 coil = "2.6.0"
 retofit = "2.11.0"
 rebbuger = "1.0.0-rc03"
+google-services = "4.4.2"
+firebase-auth = "23.2.0"
+credentials-play-services = "1.5.0"
+google-id = "1.1.1"
 
 [libraries]
 # Core
@@ -39,6 +43,7 @@ androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-man
 androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "androidx-navigation" }
+androidx-navigation-ui = { module = "androidx.navigation:navigation-ui", version.ref = "androidx-navigation" }
 
 # Coroutines
 kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk8", version.ref = "kotlin" }
@@ -64,13 +69,19 @@ hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "hil
 # Images
 coil-kt-compose = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
 
+#Firebase
+firebase-auth = { module = "com.google.firebase:firebase-auth", version.ref = "firebase-auth"}
+credentials = {module = "androidx.credentials:credentials", version.ref = "credentials-play-services"}
+credentials-play-service-auth = {module = "androidx.credentials:credentials-play-services-auth", version.ref = "credentials-play-services"}
+googleid = {module = "com.google.android.libraries.identity.googleid:googleid", version.ref = "google-id"}
+
 #Test
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 
 #Debug
-rebugger = {module = "io.github.theapache64:rebugger", version.ref = "rebbuger"}
+rebugger = { module = "io.github.theapache64:rebugger", version.ref = "rebbuger" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -78,3 +89,4 @@ jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = 
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+google-services = { id = "com.google.gms.google-services", version.ref = "google-services" }

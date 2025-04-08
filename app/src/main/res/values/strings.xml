@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">TestBKS</string>
+    <string name="clear_field">Очистить поле</string>
+    <string name="login">Логин</string>
+    <string name="password">Пароль</string>
+    <string name="log_in">Войти</string>
 </resources>

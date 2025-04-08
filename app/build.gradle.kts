@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt)
     alias(libs.plugins.compose)
+    alias(libs.plugins.google.services)
 }
 
 android {
@@ -29,17 +30,17 @@ android {
             )
         }
     }
-    
+
     ksp {
         arg("room.schemaLocation", "$projectDir/schemas")
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = "11"
+        jvmTarget = JavaVersion.VERSION_17.toString()
     }
     buildFeatures {
         compose = true
@@ -86,9 +87,16 @@ dependencies {
 
     // Navigation
     implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.navigation.ui)
 
     //Pictures
     implementation(libs.coil.kt.compose)
+
+    // Firebase
+    implementation(libs.firebase.auth)
+    implementation(libs.credentials)
+    implementation(libs.credentials.play.service.auth)
+    implementation(libs.googleid)
 
     //Debug
     implementation(libs.rebugger)
