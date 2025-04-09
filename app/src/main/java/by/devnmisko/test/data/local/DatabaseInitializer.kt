@@ -45,22 +45,19 @@ class DatabaseInitializer @Inject constructor(
     private suspend fun initializeUnits() {
         val units = listOf(
             UnitEntity(name = "шт"),
-            UnitEntity(name = "г"),
-            UnitEntity(name = "кг"),
-            UnitEntity(name = "л")
+            UnitEntity(name = "г")
         )
         unitDao.insert(units)
     }
 
     private suspend fun initializePacks() {
         val packs = listOf(
-            PackEntity(unitId = 4, name = "Молоко", type = 0, quant = 1),
+            PackEntity(unitId = 1, name = "Молоко", type = 0, quant = 1),
             PackEntity(unitId = 1, name = "Хлеб", type = 0, quant = 1),
-            PackEntity(unitId = 3, name = "Сахар", type = 1, quant = 1000),
-            PackEntity(unitId = 1, name = "Яйца", type = 0, quant = 1),
+            PackEntity(unitId = 2, name = "Сахар", type = 1, quant = 1000),
             PackEntity(unitId = 1, name = "Масло", type = 0, quant = 1),
-            PackEntity(unitId = 3, name = "Свинина", type = 1, quant = 1000),
-            PackEntity(unitId = 3, name = "Курица", type = 1, quant = 1000),
+            PackEntity(unitId = 2, name = "Свинина", type = 1, quant = 1000),
+            PackEntity(unitId = 2, name = "Курица", type = 1, quant = 1000),
             PackEntity(unitId = 2, name = "Специи", type = 1, quant = 1000),
         )
         packDao.insert(packs)

@@ -5,6 +5,7 @@ import androidx.room.Room
 import by.devnmisko.test.data.local.AppDatabase
 import by.devnmisko.test.data.local.DatabaseInitializer
 import by.devnmisko.test.data.local.dao.BarcodeDao
+import by.devnmisko.test.data.local.dao.CartDao
 import by.devnmisko.test.data.local.dao.PackDao
 import by.devnmisko.test.data.local.dao.PackPriceDao
 import by.devnmisko.test.data.local.dao.ProductDao
@@ -58,6 +59,12 @@ class DataModule {
     @Singleton
     fun provideProductDao(database: AppDatabase): ProductDao {
         return database.productDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideCartDao(database: AppDatabase): CartDao {
+        return database.cartDao()
     }
 
     @Provides

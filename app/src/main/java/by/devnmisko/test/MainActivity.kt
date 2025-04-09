@@ -26,8 +26,11 @@ import by.devnmisko.test.ui.screens.auth.AuthViewModel
 import by.devnmisko.test.ui.screens.home.HomeScreen
 import by.devnmisko.test.ui.theme.TestBKSTheme
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
@@ -46,7 +49,7 @@ class MainActivity : ComponentActivity() {
                 val appViewModel: AuthViewModel = hiltViewModel()
                 val isUserLoggedIn by appViewModel.isUserLoggedIn.collectAsStateWithLifecycle()
                 val navController = rememberNavController()
-                @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+
                 Scaffold(
                     containerColor = MaterialTheme.colorScheme.background,
                     snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
@@ -62,17 +65,19 @@ class MainActivity : ComponentActivity() {
                 val snackbar by snackbarController.snackbars.collectAsState()
                 LaunchedEffect(snackbar) {
                     snackbar.firstOrNull()?.run {
-                        snackbarHostState.showSnackbar(
-                            message = messageRes,
-                            actionLabel = actionLabelRes?.let { context.getString(it) },
-                            withDismissAction = withDismissAction,
-                            duration = duration
-                        )
+                        launch {
+                            snackbarHostState.showSnackbar(
+                                message = messageRes,
+                                actionLabel = actionLabelRes?.let { context.getString(it) },
+                                withDismissAction = withDismissAction,
+                                duration = duration
+                            )
+                        }
+                        delay(800)
                         snackbarController.dismissSnackbar(this@run)
                     }
                 }
             }
         }
     }
-
 }
