@@ -2,6 +2,8 @@ package by.devnmisko.test.data.repository
 
 import by.devnmisko.test.model.OrderHistoryItem
 import by.devnmisko.test.model.OrderItem
+import by.devnmisko.test.model.toOrderHistoryItem
+import by.devnmisko.test.model.toOrderItem
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
@@ -69,7 +71,7 @@ class FirebaseRepository @Inject constructor(
         }
     }
 
-    fun createUserDocument(
+    private fun createUserDocument(
         fullname: String, userId: String, email: String,
         onSuccess: () -> Unit,
         onFailure: (String) -> Unit
@@ -89,7 +91,7 @@ class FirebaseRepository @Inject constructor(
 
     }
 
-    fun getOrderHistory(): Flow<List<OrderHistoryItem>> = callbackFlow<List<OrderHistoryItem>> {
+    fun getOrderHistory(): Flow<List<OrderHistoryItem>> = callbackFlow {
         val userId = auth.currentUser?.uid
         if (userId == null) {
             trySend(emptyList()).isSuccess
@@ -108,22 +110,7 @@ class FirebaseRepository @Inject constructor(
 
                 val orders = snapshot?.documents?.mapNotNull { doc ->
                     try {
-                        OrderHistoryItem(
-                            id = doc.id,
-                            userId = doc.get(KEY_USER_ID).toString(),
-                            date = doc.getTimestamp(KEY_DATE)?.toDate()?.toInstant()?.atZone(ZoneId.systemDefault())?.toLocalDateTime()
-                                ?: LocalDateTime.now(),
-                            items = (doc.get(KEY_ITEMS) as List<Map<String, Any>>? ?: emptyList()).map { itemMap ->
-                                    OrderItem(
-                                        productId = (itemMap[KEY_PRODUCT_ID] as? Long)?.toInt() ?: 0,
-                                        name = itemMap[KEY_NAME] as? String ?: "",
-                                        quantity = (itemMap[KEY_QUANTITY] as? Long)?.toInt() ?: 0,
-                                        pricePerUnit = (itemMap[KEY_PRICE_PER_UNIT] as? Long)?.toInt() ?: 0,
-                                        barcode = itemMap[KEY_BARCODE] as? String
-                                    )
-                                },
-                            totalPrice = (doc.getLong(KEY_TOTAL_PRICE) ?: 0L).toInt())
-
+                        doc.toOrderHistoryItem()
                     } catch (_: Exception) {
                         null
                     }
@@ -135,7 +122,7 @@ class FirebaseRepository @Inject constructor(
         awaitClose { listener.remove() }
     }.flowOn(Dispatchers.IO)
 
-    fun fetchUserFullName() : Flow<String?> = callbackFlow<String?> {
+    fun fetchUserFullName(): Flow<String?> = callbackFlow<String?> {
         val listener = db.collection(USERS_COLLECTION)
             .document(auth.currentUser?.uid ?: "")
             .addSnapshotListener { snapshot, error ->
@@ -145,7 +132,7 @@ class FirebaseRepository @Inject constructor(
                 }
                 val document = snapshot?.data
                 if (document != null) {
-                    val fullName : String = document[KEY_FULLNAME].toString()
+                    val fullName: String = document[KEY_FULLNAME].toString()
                     trySend(fullName).isSuccess
                 } else {
                     close()
@@ -171,6 +158,7 @@ class FirebaseRepository @Inject constructor(
                     KEY_NAME to item.name,
                     KEY_QUANTITY to item.quantity,
                     KEY_PRICE_PER_UNIT to item.pricePerUnit,
+                    KEY_TYPE to item.type,
                     KEY_BARCODE to item.barcode
                 )
             },
@@ -201,5 +189,6 @@ class FirebaseRepository @Inject constructor(
         const val KEY_QUANTITY = "quantity"
         const val KEY_PRICE_PER_UNIT = "pricePerUnit"
         const val KEY_BARCODE = "barcode"
+        const val KEY_TYPE = "type"
     }
 }

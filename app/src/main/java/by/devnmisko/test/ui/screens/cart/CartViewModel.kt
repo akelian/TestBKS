@@ -36,7 +36,7 @@ class CartViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(CartUiState())
     val uiState = _uiState.asStateFlow()
 
-    var cachedCartItems: List<Pair<CartItemEntity, Product>> = emptyList()
+    private var cachedCartItems: List<Pair<CartItemEntity, Product>> = emptyList()
 
     init {
         loadCartItems()
@@ -84,12 +84,17 @@ class CartViewModel @Inject constructor(
                 name = product.name,
                 quantity = cartItem.quantity,
                 pricePerUnit = cartItem.priceAtAddition - cartItem.bonusAtAddition,
+                type = product.type,
                 barcode = product.barcode
             )
         }.filterNotNull()
 
         val totalPrice = cartItems.sumOf {
-            (it.priceAtAddition - it.bonusAtAddition) * it.quantity
+            if (it.productType == 0){
+                (it.priceAtAddition - it.bonusAtAddition) * it.quantity
+            } else {
+                ((it.priceAtAddition - it.bonusAtAddition) * (it.quantity.toDouble()/1000)).toInt()
+            }
         }
 
         firebaseRepository.placeOrder(
@@ -97,21 +102,21 @@ class CartViewModel @Inject constructor(
             totalPrice = totalPrice,
             onSuccess = {
                 viewModelScope.launch {
-                    val totalPrice = formatPrice(_uiState.value.totalPrice).toString()
+                    val price = formatPrice(_uiState.value.totalPrice)
                     cartRepository.clearCart()
                     _uiState.update {
                         it.copy(
                             isCheckoutSuccess = true,
                             checkoutMessage = context.getString(
                                 R.string.order_has_been_placed_template,
-                                totalPrice
+                                price
                             )
                         )
                     }
                 }
                 setCheckoutLoading(false)
             },
-            onFailure = { error ->
+            onFailure = { _ ->
                 snackbarController.showSnackbar(
                     context.getString(R.string.checkout_error_message)
                 )

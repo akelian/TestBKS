@@ -50,11 +50,14 @@ class AuthViewModel @Inject constructor(
     }
 
     fun signUp(password: String, email: String, fullname: String) {
-        firebaseRepository.signUp(password, email, fullname, onSuccess = {
-            switchToLogin()
-        }, onFailure = {
-            snackbarController.showSnackbar(it)
-        })
+            setLoading(true)
+            firebaseRepository.signUp(password, email, fullname, onSuccess = {
+                switchToLogin()
+                setLoading(false)
+            }, onFailure = {
+                snackbarController.showSnackbar(it)
+                setLoading(false)
+            })
     }
 
     private fun observeUserLoginStatus() {
@@ -65,19 +68,19 @@ class AuthViewModel @Inject constructor(
         }
     }
 
-    internal fun setUserLogged(isLogged: Boolean) {
+    private fun setUserLogged(isLogged: Boolean) {
         viewModelScope.launch {
             _isUserLoggedIn.emit(isLogged)
         }
     }
 
-    fun setLoading(isLoading: Boolean) {
+    private fun setLoading(isLoading: Boolean) {
         viewModelScope.launch {
             _uiState.emit(uiState.value.copy(isLoading = isLoading))
         }
     }
 
-    fun switchToLogin() {
+    private fun switchToLogin() {
         viewModelScope.launch {
             _uiState.emit(uiState.value.copy(screenState = ScreenState.Login()))
         }
