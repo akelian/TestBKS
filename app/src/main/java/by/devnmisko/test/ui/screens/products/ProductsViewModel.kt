@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import by.devnmisko.test.R
 import by.devnmisko.test.data.local.DatabaseInitializer
+import by.devnmisko.test.data.repository.CartRepository
 import by.devnmisko.test.data.repository.ProductRepository
 import by.devnmisko.test.model.Product
 import by.devnmisko.test.ui.common.SnackbarController
@@ -19,9 +20,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ProductsViewModel @Inject constructor(
-    private val productRepository: ProductRepository,
+    @ApplicationContext private val context: Context,
     databaseInitializer: DatabaseInitializer,
-    @ApplicationContext private val context : Context
+    private val productRepository: ProductRepository,
+    private val cartRepository: CartRepository
 ) : ViewModel() {
 
     @Inject
@@ -83,13 +85,17 @@ class ProductsViewModel @Inject constructor(
     }
 
     fun onAddToCart(product: Product, quantity: Int) {
-        snackbarController.showSnackbar(
-            context.getString(
-                R.string.you_added_product_message,
-                product.name,
-                quantity,
-                product.unitName
-            ))
+        viewModelScope.launch(Dispatchers.IO) {
+            cartRepository.addToCart(product, quantity)
+            snackbarController.showSnackbar(
+                context.getString(
+                    R.string.you_added_product_message,
+                    product.name,
+                    quantity,
+                    product.unitName
+                )
+            )
+        }
     }
 
 

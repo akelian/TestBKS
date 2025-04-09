@@ -15,4 +15,25 @@
     <string name="amount_less_than_zero_message">Количество должно быть больше 0</string>
     <string name="maximum_weigth_message">Максимальный вес 10 кг</string>
     <string name="you_added_product_message">Вы добавили %1$s в количестве %2$d %3$s</string>
+    <string name="remove">Удалить</string>
+    <string name="decrease">Уменьшить</string>
+    <string name="checkout_success_message">Ваш заказ успешно оформлен!</string>
+    <string name="checkout_error_message">Произошла ошибка при оформлении заказа. Попробуйте позже.</string>
+    <string name="cart_is_empty">Корзина пуста</string>
+    <string name="total">Итого:</string>
+    <string name="error">Ошибка</string>
+    <string name="success">Успешно!</string>
+    <string name="order_has_been_placed_template">Заказ оформлен.\nОбщая стоимость: %1$s руб.</string>
+    <string name="order_has_been_placed">Заказ оформлен</string>
+    <string name="place_order">Офомить заказ</string>
+    <string name="price_template">Цена: %1$s / %2$s</string>
+    <string name="amount">Количество:</string>
+    <string name="unit_template">%1$s кг</string>
+    <string name="increase">Увеличить</string>
+    <string name="price_for_template">Цена за 1 %1$s.</string>
+    <string name="normal_price_template">Обычная: %1$s</string>
+    <string name="price_with_bonus_template">Со скидкой: %1$s</string>
+    <string name="there_is_no_bonus">Скидка отсутствует</string>
+    <string name="enter_amount_in_unit_template">Введите количество в %1$s:</string>
+    <string name="cancel">Отмена</string>
 </resources>

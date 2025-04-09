@@ -47,6 +47,7 @@ import by.devnmisko.test.ui.theme.defaultPaddingDouble
 import by.devnmisko.test.ui.theme.defaultPaddingHalf
 import by.devnmisko.test.ui.tooling.UIPreviews
 import by.devnmisko.test.utils.formatPrice
+import by.devnmisko.test.utils.formatUnitName
 
 
 @Composable
@@ -169,18 +170,31 @@ fun ProductItem(
             ) {
                 Column {
                     Text(
-                        text = "Цена за ${product.unitName}",
+                        text = stringResource(
+                            R.string.price_for_template,
+                            formatUnitName(product.type, product.unitName)
+                        ),
                         style = MaterialTheme.typography.bodyMedium
                     )
 
                     Text(
-                        text = "Обычная: ${formatPrice(product.price)}",
+                        text = stringResource(
+                            R.string.normal_price_template,
+                            formatPrice(product.price)
+                        ),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                     )
 
                     Text(
-                        text = "Со скидкой: ${formatPrice(product.price - product.bonus)}",
+                        text = if (product.bonus != 0) {
+                            stringResource(
+                                R.string.price_with_bonus_template,
+                                formatPrice(product.price - product.bonus)
+                            )
+                        } else {
+                            stringResource(R.string.there_is_no_bonus)
+                        },
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.primary,
                         fontWeight = FontWeight.Bold
@@ -217,17 +231,18 @@ fun ProductQuantityDialog(
                 Spacer(modifier = Modifier.height(defaultPaddingDouble))
 
                 Text(
-                    text = "Введите количество:",
+                    text = stringResource(R.string.enter_amount_in_unit_template, product.unitName),
                     style = MaterialTheme.typography.bodyMedium
                 )
 
                 OutlinedTextField(
-                    value = quantity.toString(),
+                    value = if (quantity < 1) {
+                        ""
+                    } else quantity.toString(),
                     onValueChange = {
                         val newValue = it.toIntOrNull() ?: 0
                         quantity = newValue
 
-                        // Валидация
                         errorMessageStringRes = if (newValue <= 0) {
                             R.string.amount_less_than_zero_message
                         } else if (product.type == 1 && newValue > 10000) {
@@ -264,7 +279,7 @@ fun ProductQuantityDialog(
                             containerColor = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     ) {
-                        Text(stringResource(android.R.string.cancel))
+                        Text(stringResource(R.string.cancel))
                     }
 
                     Spacer(modifier = Modifier.width(defaultPadding))
