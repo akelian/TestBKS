@@ -1,6 +1,7 @@
 package by.devnmisko.test.ui.screens.home
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
@@ -36,9 +37,9 @@ fun HomeScreen(modifier: Modifier = Modifier, navController: NavHostController) 
             navController = bottomNavController,
             startDestination = Screen.Products.route,
         ) {
-            composable(Screen.Products.route) { Products() }
-            composable(Screen.Cart.route) { Cart() }
-            composable(Screen.Profile.route) { Profile() }
+            composable(Screen.Products.route) { Products(modifier = Modifier.padding(padding)) }
+            composable(Screen.Cart.route) { Cart(modifier = Modifier.padding(padding)) }
+            composable(Screen.Profile.route) { Profile(modifier = Modifier.padding(padding)) }
         }
     }
 }
