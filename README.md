@@ -12,7 +12,6 @@ This project was created as a test assignment for BKS.
 - [Room](https://developer.android.com/topic/libraries/architecture/room)
 - [Retrofit](https://square.github.io/retrofit/)
 - [Hilt](https://developer.android.com/training/dependency-injection/hilt-android)
-- [Coil](https://coil-kt.github.io/coil/)
 - [JUnit](https://junit.org/junit5/)
 - [Firebase Auth](https://firebase.google.com/docs/auth)
 - [Cloud Firestore](https://firebase.google.com/docs/firestore)
