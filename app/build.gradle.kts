@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt)
     alias(libs.plugins.compose)
+    alias(libs.plugins.google.services)
 }
 
 android {
@@ -29,17 +30,17 @@ android {
             )
         }
     }
-    
+
     ksp {
         arg("room.schemaLocation", "$projectDir/schemas")
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = "11"
+        jvmTarget = JavaVersion.VERSION_17.toString()
     }
     buildFeatures {
         compose = true
@@ -86,9 +87,15 @@ dependencies {
 
     // Navigation
     implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.navigation.ui)
 
     //Pictures
     implementation(libs.coil.kt.compose)
+
+    // Firebase
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.firestore)
+    implementation(libs.firebase.auth)
 
     //Debug
     implementation(libs.rebugger)
@@ -96,6 +103,9 @@ dependencies {
     // Tests
     androidTestImplementation(composeBom)
     testImplementation(libs.junit)
+    testImplementation(libs.mockito)
+    androidTestImplementation(libs.mockito.android)
+    androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.androidx.ui.test.junit4)
