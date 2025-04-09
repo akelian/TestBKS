@@ -10,4 +10,9 @@
     <string name="enter_login_and_password">Введите логин и пароль</string>
     <string name="products">Продукты</string>
     <string name="empty_list">Список пуст</string>
+    <string name="something_went_wrong">Что-то пошло не так</string>
+    <string name="add_to_cart">Добавить в корзину</string>
+    <string name="amount_less_than_zero_message">Количество должно быть больше 0</string>
+    <string name="maximum_weigth_message">Максимальный вес 10 кг</string>
+    <string name="you_added_product_message">Вы добавили %1$s в количестве %2$d %3$s</string>
 </resources>
