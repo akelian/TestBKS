@@ -15,7 +15,7 @@ android {
         applicationId = "by.devnmisko.test"
         minSdk = 26
         targetSdk = 35
-        versionCode = 3
+        versionCode = 4
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -91,6 +91,7 @@ dependencies {
 
     //Pictures
     implementation(libs.coil.kt.compose)
+    implementation(libs.google.zxing.core)
 
     // Firebase
     implementation(platform(libs.firebase.bom))

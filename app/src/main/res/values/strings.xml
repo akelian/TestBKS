@@ -36,4 +36,9 @@
     <string name="there_is_no_bonus">Скидка отсутствует</string>
     <string name="enter_amount_in_unit_template">Введите количество в %1$s:</string>
     <string name="cancel">Отмена</string>
+    <string name="logout">Выйти из аккаунта</string>
+    <string name="profile">Профиль</string>
+    <string name="cart">Корзина</string>
+    <string name="failure_while_generating_barcode">Не удалось сгенерировать штрихкод</string>
+    <string name="barcode">Штрихкод товара</string>
 </resources>

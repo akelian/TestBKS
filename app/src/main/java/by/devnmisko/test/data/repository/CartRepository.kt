@@ -13,7 +13,7 @@ import javax.inject.Singleton
 @Singleton
 class CartRepository @Inject constructor(
     private val cartDao: CartDao,
-    private val productDao: ProductDao
+    private val productDao: ProductDao,
 ) {
     fun getCartItemsWithProducts(): Flow<List<Pair<CartItemEntity, Product>>> {
         return cartDao.getAllCartItems()
@@ -61,7 +61,4 @@ class CartRepository @Inject constructor(
         return cartDao.getTotalPrice()
     }
 
-    fun getCartItemsCount(): Flow<Int> {
-        return cartDao.getCartItemsCount()
-    }
 }

@@ -50,15 +50,28 @@ fun Cart(
     viewModel: CartViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    Cart(
-        modifier = modifier,
-        uiState = uiState,
-        onQuantityChange = viewModel::updateQuantity,
-        onRemoveItem = viewModel::removeFromCart,
-        onCheckout = viewModel::checkout,
-        onDismissRequest = viewModel::dismissCheckoutMessage,
-        onConfirm = viewModel::dismissCheckoutMessage
-    )
+    Column(
+        modifier = modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Text(
+            modifier = Modifier.padding(horizontal = defaultPaddingDouble),
+            text = stringResource(R.string.cart),
+            style = MaterialTheme.typography.titleLarge,
+            fontWeight = FontWeight.Bold,
+        )
+        Spacer(modifier = Modifier.height(defaultPaddingDouble))
+        Cart(
+            uiState = uiState,
+            onQuantityChange = viewModel::updateQuantity,
+            onRemoveItem = viewModel::removeFromCart,
+            onCheckout = viewModel::checkout,
+            onDismissRequest = viewModel::dismissCheckoutMessage,
+            onConfirm = viewModel::dismissCheckoutMessage
+        )
+    }
+
 }
 
 @Composable
@@ -107,19 +120,6 @@ fun Cart(
             text = {
                 Text(uiState.checkoutMessage ?: stringResource(R.string.order_has_been_placed))
             },
-            confirmButton = {
-                Button(onClick = onConfirm) {
-                    Text(stringResource(android.R.string.ok))
-                }
-            }
-        )
-    }
-
-    uiState.checkoutError?.let { error ->
-        AlertDialog(
-            onDismissRequest = onDismissRequest,
-            title = { Text(stringResource(R.string.error)) },
-            text = { Text(error) },
             confirmButton = {
                 Button(onClick = onConfirm) {
                     Text(stringResource(android.R.string.ok))

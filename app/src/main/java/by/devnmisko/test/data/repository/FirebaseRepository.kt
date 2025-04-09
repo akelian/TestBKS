@@ -1,10 +1,20 @@
 package by.devnmisko.test.data.repository
 
+import by.devnmisko.test.model.OrderHistoryItem
+import by.devnmisko.test.model.OrderItem
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.flowOn
+import java.time.LocalDateTime
+import java.time.ZoneId
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -19,7 +29,8 @@ class FirebaseRepository @Inject constructor(
             onUserDataChanged(it.currentUser)
         }
     }
-    fun signOut(){
+
+    fun signOut() {
         auth.signOut()
     }
 
@@ -58,7 +69,8 @@ class FirebaseRepository @Inject constructor(
         }
     }
 
-    fun createUserDocument(fullname: String, userId: String, email: String,
+    fun createUserDocument(
+        fullname: String, userId: String, email: String,
         onSuccess: () -> Unit,
         onFailure: (String) -> Unit
     ) {
@@ -77,9 +89,117 @@ class FirebaseRepository @Inject constructor(
 
     }
 
+    fun getOrderHistory(): Flow<List<OrderHistoryItem>> = callbackFlow<List<OrderHistoryItem>> {
+        val userId = auth.currentUser?.uid
+        if (userId == null) {
+            trySend(emptyList()).isSuccess
+            awaitClose { }
+            return@callbackFlow
+        }
+
+        val listener = db.collection(ORDERS_COLLECTION)
+            .whereEqualTo(KEY_USER_ID, userId)
+            .orderBy(KEY_DATE, Query.Direction.DESCENDING)
+            .addSnapshotListener { snapshot, error ->
+                if (error != null) {
+                    close(error)
+                    return@addSnapshotListener
+                }
+
+                val orders = snapshot?.documents?.mapNotNull { doc ->
+                    try {
+                        OrderHistoryItem(
+                            id = doc.id,
+                            userId = doc.get(KEY_USER_ID).toString(),
+                            date = doc.getTimestamp(KEY_DATE)?.toDate()?.toInstant()?.atZone(ZoneId.systemDefault())?.toLocalDateTime()
+                                ?: LocalDateTime.now(),
+                            items = (doc.get(KEY_ITEMS) as List<Map<String, Any>>? ?: emptyList()).map { itemMap ->
+                                    OrderItem(
+                                        productId = (itemMap[KEY_PRODUCT_ID] as? Long)?.toInt() ?: 0,
+                                        name = itemMap[KEY_NAME] as? String ?: "",
+                                        quantity = (itemMap[KEY_QUANTITY] as? Long)?.toInt() ?: 0,
+                                        pricePerUnit = (itemMap[KEY_PRICE_PER_UNIT] as? Long)?.toInt() ?: 0,
+                                        barcode = itemMap[KEY_BARCODE] as? String
+                                    )
+                                },
+                            totalPrice = (doc.getLong(KEY_TOTAL_PRICE) ?: 0L).toInt())
+
+                    } catch (_: Exception) {
+                        null
+                    }
+                } ?: emptyList()
+
+                trySend(orders).isSuccess
+            }
+
+        awaitClose { listener.remove() }
+    }.flowOn(Dispatchers.IO)
+
+    fun fetchUserFullName() : Flow<String?> = callbackFlow<String?> {
+        val listener = db.collection(USERS_COLLECTION)
+            .document(auth.currentUser?.uid ?: "")
+            .addSnapshotListener { snapshot, error ->
+                if (error != null) {
+                    close(error)
+                    return@addSnapshotListener
+                }
+                val document = snapshot?.data
+                if (document != null) {
+                    val fullName : String = document[KEY_FULLNAME].toString()
+                    trySend(fullName).isSuccess
+                } else {
+                    close()
+                }
+            }
+        awaitClose { listener.remove() }
+    }.flowOn(Dispatchers.IO)
+
+    fun placeOrder(
+        items: List<OrderItem>,
+        totalPrice: Int,
+        onSuccess: () -> Unit,
+        onFailure: (String) -> Unit
+    ) {
+        val timestamp = com.google.firebase.Timestamp.now()
+
+        val orderData = hashMapOf(
+            KEY_USER_ID to auth.currentUser?.uid,
+            KEY_DATE to timestamp,
+            KEY_ITEMS to items.map { item ->
+                hashMapOf(
+                    KEY_PRODUCT_ID to item.productId,
+                    KEY_NAME to item.name,
+                    KEY_QUANTITY to item.quantity,
+                    KEY_PRICE_PER_UNIT to item.pricePerUnit,
+                    KEY_BARCODE to item.barcode
+                )
+            },
+            KEY_TOTAL_PRICE to totalPrice
+        )
+
+        db.collection(ORDERS_COLLECTION)
+            .document().set(orderData)
+            .addOnSuccessListener {
+                onSuccess()
+            }
+            .addOnFailureListener { e ->
+                onFailure(e.message ?: "Неизвестная ошибка при создании заказа")
+            }
+    }
+
     companion object {
         const val USERS_COLLECTION = "Users"
+        const val ORDERS_COLLECTION = "orders"
         const val KEY_FULLNAME = "fullname"
         const val KEY_EMAIL = "email"
+        const val KEY_DATE = "date"
+        const val KEY_USER_ID = "userId"
+        const val KEY_ITEMS = "items"
+        const val KEY_TOTAL_PRICE = "totalPrice"
+        const val KEY_NAME = "name"
+        const val KEY_PRODUCT_ID = "productId"
+        const val KEY_QUANTITY = "quantity"
+        const val KEY_PRICE_PER_UNIT = "pricePerUnit"
+        const val KEY_BARCODE = "barcode"
     }
 }

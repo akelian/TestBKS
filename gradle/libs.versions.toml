@@ -23,7 +23,7 @@ rebbuger = "1.0.0-rc03"
 mockito = "3.11.2"
 firebaseBom = "33.12.0"
 google-services = "4.4.2"
-
+google-zxing = "3.5.2"
 
 [libraries]
 # Core
@@ -68,6 +68,7 @@ hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "hil
 
 # Images
 coil-kt-compose = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
+google-zxing-core = {module = "com.google.zxing:core", version.ref ="google-zxing"}
 
 #Firebase
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
