@@ -23,7 +23,7 @@
     <string name="total">Итого:</string>
     <string name="error">Ошибка</string>
     <string name="success">Успешно!</string>
-    <string name="order_has_been_placed_template">Заказ оформлен.\nОбщая стоимость: %1$s руб.</string>
+    <string name="order_has_been_placed_template">Заказ оформлен.\nОбщая стоимость: %1$s</string>
     <string name="order_has_been_placed">Заказ оформлен</string>
     <string name="place_order">Офомить заказ</string>
     <string name="price_template">Цена: %1$s / %2$s</string>
@@ -41,4 +41,6 @@
     <string name="cart">Корзина</string>
     <string name="failure_while_generating_barcode">Не удалось сгенерировать штрихкод</string>
     <string name="barcode">Штрихкод товара</string>
+    <string name="personal_data">Личные данные</string>
+    <string name="barcode_not_found">Штрих-код не найден</string>
 </resources>

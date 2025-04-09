@@ -5,5 +5,6 @@ data class OrderItem(
     val name: String,
     val quantity: Int,
     val pricePerUnit: Int,
+    val type: Int,
     val barcode: String?
 )

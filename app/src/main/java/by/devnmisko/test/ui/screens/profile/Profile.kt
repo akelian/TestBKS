@@ -18,7 +18,6 @@ import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -76,7 +75,6 @@ fun Profile(
 
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Profile(
     modifier: Modifier = Modifier,
@@ -106,7 +104,7 @@ fun Profile(
 
             OrderHistorySection(
                 orders = uiState.orders,
-                isLoading = uiState.isLoading,
+                isLoading = uiState.isHistoryLoading,
             )
 
             Spacer(modifier = Modifier.weight(1f))
@@ -126,7 +124,7 @@ fun Profile(
 
 @Composable
 private fun UserInfoSection(
-    userName: String,
+    userName: String?,
     isLoading: Boolean
 ) {
     Card(
@@ -141,7 +139,7 @@ private fun UserInfoSection(
             modifier = Modifier.padding(defaultPaddingDouble)
         ) {
             Text(
-                "Личные данные",
+                stringResource(R.string.personal_data),
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold
             )
@@ -151,7 +149,10 @@ private fun UserInfoSection(
             if (isLoading) {
                 CircularProgressIndicator()
             } else {
-                Text("ФИО: $userName", style = MaterialTheme.typography.bodyLarge)
+                Text(
+                    "ФИО: ${userName ?: "Ошибка при загрузке профиля"}",
+                    style = MaterialTheme.typography.bodyLarge
+                )
             }
         }
     }
@@ -223,7 +224,8 @@ private fun OrderItem(
     ) {
         Column(
             modifier = Modifier
-                .background(MaterialTheme.colorScheme.surfaceContainerHigh).padding(defaultPaddingDouble)
+                .background(MaterialTheme.colorScheme.surfaceContainerHigh)
+                .padding(defaultPaddingDouble)
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -279,15 +281,22 @@ private fun OrderProductItem(item: OrderItem) {
     ) {
         Column {
             Text(item.name, fontWeight = FontWeight.Medium)
-            Text("${item.quantity} ${if (item.quantity % 10 == 1) "шт" else "шт"}")
+            Text("${item.quantity} ${if (item.type == 0) "шт" else "г"}")
             item.barcode?.let {
-//                Text("Штрихкод: $it", style = MaterialTheme.typography.bodySmall)
                 BarcodeImage(
                     barcodeValue = it,
                 )
-            }
+            } ?: Text(stringResource(R.string.barcode_not_found))
         }
-        Text(formatPrice(item.pricePerUnit * item.quantity))
+        Text(
+            formatPrice(
+                 if (item.type == 0) {
+                     item.pricePerUnit * item.quantity
+                } else {
+                     (item.pricePerUnit * (item.quantity.toDouble() /1000)).toInt()
+                }
+            )
+        )
     }
 }
 
@@ -319,6 +328,7 @@ private fun ProfilePreview() {
                                     name = "Продукт 1",
                                     quantity = 2,
                                     pricePerUnit = 100,
+                                    type = 0,
                                     barcode = "1234567890123"
                                 ),
                                 OrderItem(
@@ -326,6 +336,7 @@ private fun ProfilePreview() {
                                     name = "Продукт 2",
                                     quantity = 4,
                                     pricePerUnit = 100,
+                                    type = 1,
                                     barcode = "1234567890123"
                                 ),
                             ),
