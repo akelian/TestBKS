@@ -6,7 +6,10 @@ import androidx.lifecycle.viewModelScope
 import by.devnmisko.test.R
 import by.devnmisko.test.data.local.entity.CartItemEntity
 import by.devnmisko.test.data.repository.CartRepository
+import by.devnmisko.test.data.repository.FirebaseRepository
+import by.devnmisko.test.model.OrderItem
 import by.devnmisko.test.model.Product
+import by.devnmisko.test.ui.common.SnackbarController
 import by.devnmisko.test.utils.formatPrice
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -23,11 +26,17 @@ import javax.inject.Inject
 @HiltViewModel
 class CartViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
-    private val cartRepository: CartRepository
+    private val cartRepository: CartRepository,
+    private val firebaseRepository: FirebaseRepository
 ) : ViewModel() {
+
+    @Inject
+    lateinit var snackbarController: SnackbarController
 
     private val _uiState = MutableStateFlow(CartUiState())
     val uiState = _uiState.asStateFlow()
+
+    var cachedCartItems: List<Pair<CartItemEntity, Product>> = emptyList()
 
     init {
         loadCartItems()
@@ -44,6 +53,7 @@ class CartViewModel @Inject constructor(
                     setCartEmpty()
                 } else {
                     setCartItems(cartItems, totalPrice)
+                    cachedCartItems = cartItems
                 }
                 isLoading(false)
             }.flowOn(Dispatchers.IO).collect()
@@ -63,35 +73,57 @@ class CartViewModel @Inject constructor(
     }
 
     fun checkout() {
-        viewModelScope.launch {
-            try {
-                val totalPrice = formatPrice(_uiState.value.totalPrice).toString()
-                _uiState.update { it.copy(isCheckoutLoading = true) }
-                cartRepository.clearCart()
-                _uiState.update {
-                    it.copy(
-                        isCheckoutSuccess = true,
-                        checkoutMessage = context.getString(
-                            R.string.order_has_been_placed_template,
-                            totalPrice
-                        )
-                    )
-                }
-            } catch (_: Exception) {
-                _uiState.update {
-                    it.copy(checkoutError = context.getString(R.string.checkout_error_message))
-                }
-            } finally {
-                _uiState.update { it.copy(isCheckoutLoading = false) }
-            }
+        if (cachedCartItems.isEmpty()) return
+        setCheckoutLoading(true)
+        val cartItems = cachedCartItems.map { it.first }
+        val products = cachedCartItems.map { it.second }
+        val orderItems = cartItems.map { cartItem ->
+            val product = products.find { it.id == cartItem.packId } ?: return@map null
+            OrderItem(
+                productId = product.id,
+                name = product.name,
+                quantity = cartItem.quantity,
+                pricePerUnit = cartItem.priceAtAddition - cartItem.bonusAtAddition,
+                barcode = product.barcode
+            )
+        }.filterNotNull()
+
+        val totalPrice = cartItems.sumOf {
+            (it.priceAtAddition - it.bonusAtAddition) * it.quantity
         }
+
+        firebaseRepository.placeOrder(
+            items = orderItems,
+            totalPrice = totalPrice,
+            onSuccess = {
+                viewModelScope.launch {
+                    val totalPrice = formatPrice(_uiState.value.totalPrice).toString()
+                    cartRepository.clearCart()
+                    _uiState.update {
+                        it.copy(
+                            isCheckoutSuccess = true,
+                            checkoutMessage = context.getString(
+                                R.string.order_has_been_placed_template,
+                                totalPrice
+                            )
+                        )
+                    }
+                }
+                setCheckoutLoading(false)
+            },
+            onFailure = { error ->
+                snackbarController.showSnackbar(
+                    context.getString(R.string.checkout_error_message)
+                )
+                setCheckoutLoading(false)
+            }
+        )
     }
 
     fun dismissCheckoutMessage() {
         _uiState.update {
             it.copy(
                 isCheckoutSuccess = false,
-                checkoutError = null
             )
         }
     }
@@ -108,6 +140,12 @@ class CartViewModel @Inject constructor(
         _uiState.update { it.copy(cartState = CartState.CartItems(items), totalPrice = totalPrice) }
     }
 
+    private fun setCheckoutLoading(loading: Boolean) {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isCheckoutLoading = loading) }
+        }
+    }
+
     sealed interface CartState {
         object Empty : CartState
         data class CartItems(val items: List<Pair<CartItemEntity, Product>>) : CartState
@@ -120,6 +158,5 @@ class CartViewModel @Inject constructor(
         val isCheckoutLoading: Boolean = false,
         val isCheckoutSuccess: Boolean = false,
         val checkoutMessage: String? = null,
-        val checkoutError: String? = null
     )
 }
