@@ -27,28 +27,22 @@ import by.devnmisko.test.ui.theme.defaultPaddingHalf
 @Composable
 fun RegistrationContent(
     modifier: Modifier = Modifier,
-    onButtonCLick: (String, String, String, String) -> Unit,
+    onButtonCLick: (String, String, String) -> Unit,
     isLoading: Boolean
 ) {
-    var login = rememberSaveable { mutableStateOf("") }
     var password = rememberSaveable { mutableStateOf("") }
     var email = rememberSaveable { mutableStateOf("") }
     var fullname = rememberSaveable { mutableStateOf("") }
     val keyboardController = LocalSoftwareKeyboardController.current
     DefaultTextField(
-        text = login,
-        label = { Text(stringResource(R.string.login)) },
-        modifier = modifier.padding(bottom = defaultPadding),
-    )
-    DefaultTextField(
-        text = password,
-        label = { Text(stringResource(R.string.password)) },
+        text = email,
+        label = { Text(stringResource(R.string.email)) },
         modifier = Modifier
             .padding(bottom = defaultPadding),
     )
     DefaultTextField(
-        text = email,
-        label = { Text(stringResource(R.string.email)) },
+        text = password,
+        label = { Text(stringResource(R.string.password)) },
         modifier = Modifier
             .padding(bottom = defaultPadding),
     )
@@ -62,7 +56,7 @@ fun RegistrationContent(
     Button(
         modifier = modifier.height(48.dp),
         onClick = {
-            onButtonCLick(login.value, password.value, email.value, fullname.value)
+            onButtonCLick(password.value, email.value, fullname.value)
             keyboardController?.hide()
         }) {
         if (isLoading) {
@@ -85,7 +79,7 @@ private fun RegistrationContentPreview() {
             verticalArrangement = Arrangement.spacedBy(defaultPaddingHalf),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            RegistrationContent(onButtonCLick = { _, _, _, _ -> }, isLoading = true)
+            RegistrationContent(onButtonCLick = { _, _, _ -> }, isLoading = true)
         }
     }
 }

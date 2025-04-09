@@ -49,8 +49,8 @@ class AuthViewModel @Inject constructor(
         }
     }
 
-    fun signUp(login: String, password: String, email: String, fullname: String) {
-        firebaseRepository.signUp(login, password, email, fullname, onSuccess = {
+    fun signUp(password: String, email: String, fullname: String) {
+        firebaseRepository.signUp(password, email, fullname, onSuccess = {
             switchToLogin()
         }, onFailure = {
             snackbarController.showSnackbar(it)

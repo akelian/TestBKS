@@ -8,4 +8,6 @@
     <string name="fullname">Полное имя</string>
     <string name="register">Регистрация</string>
     <string name="enter_login_and_password">Введите логин и пароль</string>
+    <string name="products">Продукты</string>
+    <string name="empty_list">Список пуст</string>
 </resources>

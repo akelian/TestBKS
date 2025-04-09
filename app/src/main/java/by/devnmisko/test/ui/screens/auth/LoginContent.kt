@@ -53,7 +53,7 @@ fun LoginContent(
             onDone = { focusManager.moveFocus(FocusDirection.Down) },
             onNext = { focusManager.moveFocus(FocusDirection.Down) }
         ),
-        label = { Text(stringResource(R.string.login)) }
+        label = { Text(stringResource(R.string.email)) }
     )
 
     TextField(

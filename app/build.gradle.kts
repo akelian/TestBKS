@@ -93,11 +93,9 @@ dependencies {
     implementation(libs.coil.kt.compose)
 
     // Firebase
+    implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.firestore)
     implementation(libs.firebase.auth)
-    implementation(libs.credentials)
-    implementation(libs.credentials.play.service.auth)
-    implementation(libs.googleid)
 
     //Debug
     implementation(libs.rebugger)
@@ -105,6 +103,9 @@ dependencies {
     // Tests
     androidTestImplementation(composeBom)
     testImplementation(libs.junit)
+    testImplementation(libs.mockito)
+    androidTestImplementation(libs.mockito.android)
+    androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.androidx.ui.test.junit4)

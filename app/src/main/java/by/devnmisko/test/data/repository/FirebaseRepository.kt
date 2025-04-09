@@ -19,6 +19,9 @@ class FirebaseRepository @Inject constructor(
             onUserDataChanged(it.currentUser)
         }
     }
+    fun signOut(){
+        auth.signOut()
+    }
 
     fun signIn(
         email: String, password: String,
@@ -29,7 +32,6 @@ class FirebaseRepository @Inject constructor(
     }
 
     fun signUp(
-        login: String,
         password: String,
         email: String,
         fullname: String,
@@ -41,7 +43,13 @@ class FirebaseRepository @Inject constructor(
                 // Sign in success, update UI with the signed-in user's information
                 val user = task.result.user
                 user?.let {
-                    createUserDocument(login, fullname, user.uid, onSuccess, onFailure)
+                    createUserDocument(
+                        fullname = fullname,
+                        userId = user.uid,
+                        email = email,
+                        onSuccess = onSuccess,
+                        onFailure = onFailure
+                    )
                 }
             } else {
                 // If sign in fails, display a message to the user.
@@ -50,26 +58,28 @@ class FirebaseRepository @Inject constructor(
         }
     }
 
-    fun createUserDocument(
-        login: String, fullname: String, userId: String,
+    fun createUserDocument(fullname: String, userId: String, email: String,
         onSuccess: () -> Unit,
         onFailure: (String) -> Unit
     ) {
         db.collection(USERS_COLLECTION).document(userId).set(
             hashMapOf(
-                KEY_LOGIN to login,
                 KEY_FULLNAME to fullname,
+                KEY_EMAIL to email,
             )
-        ).addOnSuccessListener {
-            onSuccess()
-        }
-            .addOnFailureListener { e -> onFailure(e.message ?: "") }
+        )
+            .addOnSuccessListener {
+                onSuccess()
+            }
+            .addOnFailureListener { e ->
+                onFailure(e.message ?: "")
+            }
 
     }
 
     companion object {
         const val USERS_COLLECTION = "Users"
-        const val KEY_LOGIN = "login"
         const val KEY_FULLNAME = "fullname"
+        const val KEY_EMAIL = "email"
     }
 }

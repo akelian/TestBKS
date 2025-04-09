@@ -39,8 +39,8 @@ fun Auth(
             authViewModel.signIn(login, password)
             keyboardController?.hide()
         },
-        onRegisterClick = { login, password, email, fullname ->
-            authViewModel.signUp(login, password, email, fullname)
+        onRegisterClick = { password, email, fullname ->
+            authViewModel.signUp(password, email, fullname)
             keyboardController?.hide()
         },
         onBeginRegisterClick = {
@@ -55,7 +55,7 @@ fun Auth(
     uiState: AuthViewModel.UiState,
     onBeginRegisterClick: () -> Unit = {},
     onLoginCLick: (String, String) -> Unit,
-    onRegisterClick: (String, String, String, String) -> Unit
+    onRegisterClick: (String, String, String) -> Unit
 ) {
     Surface {
         Column(
@@ -88,8 +88,8 @@ fun Auth(
                 is AuthViewModel.ScreenState.Registration -> {
                     RegistrationContent(
                         modifier = modifier.padding(defaultPadding),
-                        onButtonCLick = { login, password, email, fullname ->
-                            onRegisterClick(login, password, email, fullname)
+                        onButtonCLick = {  password, email, fullname ->
+                            onRegisterClick( password, email, fullname)
                         },
                         isLoading = uiState.isLoading
                     )
@@ -110,7 +110,7 @@ private fun AuthLoginPreview() {
                 screenState = AuthViewModel.ScreenState.Login(),
             ),
             onBeginRegisterClick = {},
-            onRegisterClick = { _, _, _, _ -> },
+            onRegisterClick = { _, _, _ -> },
             onLoginCLick = { _, _ -> })
     }
 }
@@ -124,7 +124,7 @@ private fun AuthRegisterPreview() {
                 screenState = AuthViewModel.ScreenState.Registration(),
             ),
             onBeginRegisterClick = {},
-            onRegisterClick = { _, _, _, _ -> },
+            onRegisterClick = { _, _, _ -> },
             onLoginCLick = { _, _ -> })
     }
 }

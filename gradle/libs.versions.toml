@@ -20,11 +20,10 @@ coroutines = "1.10.1"
 coil = "2.6.0"
 retofit = "2.11.0"
 rebbuger = "1.0.0-rc03"
+mockito = "3.11.2"
+firebaseBom = "33.12.0"
 google-services = "4.4.2"
-firebase-auth = "23.2.0"
-firebase-firestore = "25.1.3"
-credentials-play-services = "1.5.0"
-google-id = "1.1.1"
+
 
 [libraries]
 # Core
@@ -71,14 +70,14 @@ hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "hil
 coil-kt-compose = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
 
 #Firebase
-firebase-auth = { module = "com.google.firebase:firebase-auth", version.ref = "firebase-auth"}
-credentials = {module = "androidx.credentials:credentials", version.ref = "credentials-play-services"}
-credentials-play-service-auth = {module = "androidx.credentials:credentials-play-services-auth", version.ref = "credentials-play-services"}
-googleid = {module = "com.google.android.libraries.identity.googleid:googleid", version.ref = "google-id"}
-firebase-firestore = {module = "com.google.firebase:firebase-firestore-ktx", version.ref = "firebase-firestore"}
+firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
+firebase-auth = { module = "com.google.firebase:firebase-auth"}
+firebase-firestore = {module = "com.google.firebase:firebase-firestore-ktx"}
 
 #Test
 junit = { group = "junit", name = "junit", version.ref = "junit" }
+mockito = { module = "org.mockito:mockito-core", version.ref = "mockito" }
+mockito-android = { module = "org.mockito:mockito-android", version.ref = "mockito" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 
